@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión · facturación</title>
+    <link rel="stylesheet" href="/static/styles/acceso.css">
+</head>
+<body>
+    <section class="acceso__marca">
+        <p class="acceso__marca__logo">facturación <span>.sys</span></p>
+        <div class="acceso__marca__cuerpo">
+            <h1 class="acceso__marca__titulo">Controla tu inventario<br>y factura sin fricción.</h1>
+            <p class="acceso__marca__descripcion">Registra productos, controla existencias y emite facturas desde un solo panel.</p>
+        </div>
+        <p class="acceso__marca__pie">sistema de gestión empresarial</p>
+    </section>
+
+    <section class="acceso__formulario">
+        <div class="tarjeta-acceso">
+            <header class="tarjeta-acceso__encabezado">
+                <h2 class="tarjeta-acceso__titulo">Ingresar</h2>
+                <p class="tarjeta-acceso__subtitulo">¿No tienes cuenta? <a href="/registro">Crear cuenta</a></p>
+            </header>
+
+            <form class="formulario-acceso"
+                  hx-post="/login"
+                  hx-target="#contenedor-error-login"
+                  hx-swap="innerHTML"
+                  hx-indicator="#indicador-login">
+
+                <div id="contenedor-error-login">
+                    {% if error %}
+                    <p class="formulario-acceso__error">{{ error }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="nombre">Nombre de usuario</label>
+                    <input class="campo__control" type="text" id="nombre" name="nombre" placeholder="tu nombre" autocomplete="username" required>
+                </div>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="contrasena">Contraseña</label>
+                    <input class="campo__control" type="password" id="contrasena" name="contrasena" placeholder="••••••••" autocomplete="current-password" required>
+                </div>
+
+                <button class="boton boton--principal" type="submit">
+                    <span class="htmx-indicator" id="indicador-login">Verificando... </span>Ingresar
+                </button>
+            </form>
+
+            <p class="tarjeta-acceso__pie">Tus datos se protegen con hash bcrypt</p>
+        </div>
+    </section>
+</body>
+</html>

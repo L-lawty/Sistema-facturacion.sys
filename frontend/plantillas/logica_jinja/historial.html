@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de facturas · facturación</title>
+    <link rel="stylesheet" href="/static/styles/facturacion.css">
+</head>
+<body>
+    <header class="factura__encabezado">
+        <div class="factura__marca-bloque">
+            <p class="factura__marca">facturación <span>.sys</span></p>
+            <h1 class="factura__titulo">Historial de facturas</h1>
+        </div>
+
+        <nav class="app__nav">
+            <a class="app__nav__enlace" href="/facturacion">Facturar</a>
+            <a class="app__nav__enlace" href="/stock">Stock</a>
+            <a class="app__nav__enlace app__nav__enlace--activo" href="/historial">Historial</a>
+        </nav>
+
+        <div class="factura__usuario-bloque">
+            <p class="factura__usuario">{{ usuario_nombre }}</p>
+            <button class="app__nav__salir" type="button" hx-post="/salir" hx-target="body">Salir</button>
+        </div>
+    </header>
+
+    <main class="factura__contenido factura__contenido--simple">
+        <section class="factura__panel-derecho factura__panel-derecho--ancho">
+            {% if facturas %}
+            <table class="carrito__tabla">
+                <thead>
+                    <tr>
+                        <th>Factura</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for factura in facturas %}
+                    <tr>
+                        <td>#{{ factura.id }}</td>
+                        <td>{{ factura.cliente_nombre }}</td>
+                        <td>{{ factura.creado_en }}</td>
+                        <td>L. {{ "%.2f"|format(factura.total) }}</td>
+                        <td>
+                            <a class="boton boton--secundario boton--pequeno" href="/facturacion/{{ factura.id }}">Ver</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="factura__vacio">Aún no has generado ninguna factura.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

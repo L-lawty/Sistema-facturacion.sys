@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario · facturación</title>
+    <link rel="stylesheet" href="/static/styles/facturacion.css">
+</head>
+<body>
+    <header class="factura__encabezado">
+        <div class="factura__marca-bloque">
+            <p class="factura__marca">facturación <span>.sys</span></p>
+            <h1 class="factura__titulo">Inventario</h1>
+        </div>
+
+        <nav class="app__nav">
+            <a class="app__nav__enlace" href="/facturacion">Facturar</a>
+            <a class="app__nav__enlace app__nav__enlace--activo" href="/stock">Stock</a>
+            <a class="app__nav__enlace" href="/historial">Historial</a>
+        </nav>
+
+        <div class="factura__usuario-bloque">
+            <p class="factura__usuario">{{ usuario_nombre }}</p>
+            <button class="app__nav__salir" type="button" hx-post="/salir" hx-target="body">Salir</button>
+        </div>
+    </header>
+
+    <main class="factura__contenido">
+        <section class="factura__panel-izquierdo">
+            <h2 class="factura__subtitulo">Agregar producto</h2>
+
+            <form class="formulario-agregar"
+                  hx-post="/stock/crear"
+                  hx-target="#tabla-stock"
+                  hx-swap="outerHTML"
+                  hx-indicator="#indicador-crear-stock">
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="nombre">Nombre</label>
+                    <input class="campo__control" type="text" id="nombre" name="nombre" placeholder="Nombre del producto" required minlength="2">
+                </div>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="categoria">Categoría</label>
+                    <select class="campo__control" id="categoria" name="categoria" required>
+                        <option value="" disabled selected>Selecciona una categoría</option>
+                        {% for cat in categorias %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="precio">Precio</label>
+                    <input class="campo__control" type="number" id="precio" name="precio" min="0.01" step="0.01" placeholder="0.00" required>
+                </div>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="stock">Stock inicial</label>
+                    <input class="campo__control" type="number" id="stock" name="stock" min="0" value="0" required>
+                </div>
+
+                <button class="boton boton--principal" type="submit">
+                    <span class="htmx-indicator" id="indicador-crear-stock">Agregando... </span>+ Agregar producto
+                </button>
+            </form>
+        </section>
+
+        <section class="factura__panel-derecho">
+            <h2 class="factura__subtitulo">Inventario completo</h2>
+            {% include "_tabla_stock.html" %}
+        </section>
+    </main>
+</body>
+</html>

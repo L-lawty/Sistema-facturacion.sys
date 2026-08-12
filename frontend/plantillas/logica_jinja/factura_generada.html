@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura #{{ factura.id }}</title>
+    <link rel="stylesheet" href="/static/styles/facturacion.css">
+</head>
+<body>
+    <main class="comprobante">
+        <header class="comprobante__encabezado">
+            <p class="factura__marca">facturación <span>.sys</span></p>
+            <h1 class="comprobante__titulo">Factura #{{ factura.id }}</h1>
+            <p class="comprobante__meta">Cliente: {{ factura.cliente_nombre }}</p>
+            <p class="comprobante__meta">Fecha: {{ factura.creado_en }}</p>
+        </header>
+
+        <table class="carrito__tabla">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cant.</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in detalle %}
+                <tr>
+                    <td>{{ item.nombre_producto }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>L. {{ "%.2f"|format(item.precio_unitario) }}</td>
+                    <td>L. {{ "%.2f"|format(item.subtotal) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p class="carrito__total">Total: <span>L. {{ "%.2f"|format(factura.total) }}</span></p>
+
+        <a class="boton boton--secundario comprobante__volver" href="/facturacion">Nueva factura</a>
+    </main>
+</body>
+</html>

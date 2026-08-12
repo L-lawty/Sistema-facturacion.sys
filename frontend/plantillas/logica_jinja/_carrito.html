@@ -1,0 +1,41 @@
+<div id="carrito" class="carrito">
+    {% if error %}
+    <p class="formulario-acceso__error">{{ error }}</p>
+    {% endif %}
+
+    {% if carrito %}
+    <table class="carrito__tabla">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in carrito %}
+            <tr>
+                <td>{{ item.nombre }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>L. {{ "%.2f"|format(item.precio_unitario) }}</td>
+                <td>L. {{ "%.2f"|format(item.subtotal) }}</td>
+                <td>
+                    <button class="boton-quitar"
+                            type="button"
+                            hx-post="/facturacion/quitar/{{ item.producto_id }}"
+                            hx-target="#carrito"
+                            hx-swap="outerHTML">
+                        Quitar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="carrito__total">Total: <span>L. {{ "%.2f"|format(total) }}</span></p>
+    {% else %}
+    <p class="factura__vacio">Aún no has agregado productos.</p>
+    {% endif %}
+</div>

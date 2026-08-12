@@ -1,0 +1,123 @@
+<div id="tabla-stock" class="carrito">
+    <div class="resumen-categorias">
+        <h3 class="resumen-categorias__titulo">Resumen por categoría</h3>
+        {% if resumen %}
+        <ul class="resumen-categorias__lista">
+            {% for fila in resumen %}
+            <li class="resumen-categorias__item">
+                <span>{{ fila.categoria }}</span>
+                <strong>{{ fila.cantidad }}</strong>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="factura__vacio">Sin productos todavía.</p>
+        {% endif %}
+    </div>
+
+    {% if error %}
+    <p class="formulario-acceso__error">{{ error }}</p>
+    {% endif %}
+
+    {% if productos %}
+    <table class="carrito__tabla">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            {% if editar_id == producto.id %}
+            <tr>
+                <td colspan="6">
+                    <form class="formulario-fila-stock"
+                          hx-post="/stock/actualizar/{{ producto.id }}"
+                          hx-target="#tabla-stock"
+                          hx-swap="outerHTML"
+                          hx-indicator="#indicador-stock-{{ producto.id }}">
+
+                        <input class="campo__control campo__control--celda" type="text"
+                               name="nombre" value="{{ producto.nombre }}" required minlength="2">
+
+                        <select class="campo__control campo__control--celda" name="categoria" required>
+                            {% if producto.categoria not in categorias %}
+                            <option value="{{ producto.categoria }}" selected>{{ producto.categoria }}</option>
+                            {% endif %}
+                            {% for cat in categorias %}
+                            <option value="{{ cat }}" {% if cat == producto.categoria %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <input class="campo__control campo__control--celda" type="number"
+                               name="precio" value="{{ producto.precio }}" min="0.01" step="0.01" required>
+
+                        <input class="campo__control campo__control--celda" type="number"
+                               name="stock" value="{{ producto.stock }}" min="0" required>
+
+                        <div class="fila-stock__acciones">
+                            <button class="boton boton--principal boton--pequeno" type="submit">
+                                <span class="htmx-indicator" id="indicador-stock-{{ producto.id }}">Guardando... </span>Guardar
+                            </button>
+                            <button class="boton boton--secundario boton--pequeno" type="button"
+                                    hx-get="/stock/tabla" hx-target="#tabla-stock" hx-swap="outerHTML">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr class="{% if not producto.activo %}fila-stock--archivado{% endif %}">
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.categoria }}</td>
+                <td>L. {{ "%.2f"|format(producto.precio) }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>
+                    {% if not producto.activo %}
+                    <span class="estado-stock estado-stock--archivado">Archivado</span>
+                    {% elif producto.stock == 0 %}
+                    <span class="estado-stock estado-stock--agotado">Agotado</span>
+                    {% elif producto.stock < 5 %}
+                    <span class="estado-stock estado-stock--bajo">Stock bajo</span>
+                    {% else %}
+                    <span class="estado-stock estado-stock--disponible">Disponible</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="fila-stock__acciones">
+                        {% if producto.activo %}
+                        <button class="boton boton--secundario boton--pequeno" type="button"
+                                hx-get="/stock/editar/{{ producto.id }}"
+                                hx-target="#tabla-stock" hx-swap="outerHTML">
+                            Editar
+                        </button>
+                        <button class="boton-quitar" type="button"
+                                hx-post="/stock/archivar/{{ producto.id }}"
+                                hx-target="#tabla-stock" hx-swap="outerHTML"
+                                hx-confirm="¿Archivar {{ producto.nombre }}? Ya no aparecerá disponible para facturar, pero podrás reactivarlo cuando quieras.">
+                            Archivar
+                        </button>
+                        {% else %}
+                        <button class="boton boton--secundario boton--pequeno" type="button"
+                                hx-post="/stock/reactivar/{{ producto.id }}"
+                                hx-target="#tabla-stock" hx-swap="outerHTML">
+                            Reactivar
+                        </button>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="factura__vacio">Aún no has agregado productos al inventario.</p>
+    {% endif %}
+</div>

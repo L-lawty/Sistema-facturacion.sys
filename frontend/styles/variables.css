@@ -1,0 +1,56 @@
+:root{
+
+  /* ---- Fondo y superficies ---- */
+  --bg: #0a0a0a;
+  --bg-secundario: #131313;
+  --border: #232323;
+
+  /* ---- Texto ---- */
+  --text: #ededed;
+  --text-secundario: #8a8a8a;
+  --text-del-sistema: #55555a;
+
+  /* ---- Glow / gradiente radial de fondo ---- */
+  --glow: rgba(210, 210, 210, 0.10);
+
+  /* ---- Acentos de estado (urgencia / feedback) ---- */
+  --state-vencido: #c9503f;
+  --state-casi-vencido: #d9a441;
+  --state-completado: #4caf6d;
+
+  /* ---- Acentos de categoría ---- */
+  --cat-trabajo: #5b8def;
+  --cat-personal: #9d7bd8;
+  --cat-salud: #4caf6d;
+  --cat-estudio: #d9a441;
+
+  /* ---- Tipografía ---- */
+  --font-sans-principal: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono-secu: 'JetBrains Mono', 'SF Mono', 'Courier New', monospace;
+
+  --text-labels: 10px;
+  --text-botones: 12.5px;
+  --text-base-cuerpoGeneral: 14px;
+  --text-nombre-tarea: 15px;
+  --text-titulo-aside: 24px;
+  --text-Titulos: 44px;
+
+  --weight-regular: 400;
+  --weight-medium: 600;
+  --weight-bold: 800;
+
+  --tracking-titulos-grandes: -1px;
+  --tracking-titulos-secu: 1.2px;
+
+  --radius-sm: 5px;
+  --radius-md: 8px;
+
+  --ease-standard: .15s ease;
+  --ease-drawer: .3s cubic-bezier(.4,0,.2,1);
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}

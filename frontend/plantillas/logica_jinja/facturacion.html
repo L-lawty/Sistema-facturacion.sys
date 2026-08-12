@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturación</title>
+    <link rel="stylesheet" href="/static/styles/facturacion.css">
+</head>
+<body>
+    <header class="factura__encabezado">
+        <div class="factura__marca-bloque">
+            <p class="factura__marca">facturación <span>.sys</span></p>
+            <h1 class="factura__titulo">Nueva factura</h1>
+        </div>
+
+        <nav class="app__nav">
+            <a class="app__nav__enlace app__nav__enlace--activo" href="/facturacion">Facturar</a>
+            <a class="app__nav__enlace" href="/stock">Stock</a>
+            <a class="app__nav__enlace" href="/historial">Historial</a>
+        </nav>
+
+        <div class="factura__usuario-bloque">
+            <p class="factura__usuario">{{ usuario_nombre }}</p>
+            <button class="app__nav__salir" type="button" hx-post="/salir" hx-target="body">Salir</button>
+        </div>
+    </header>
+
+    <main class="factura__contenido">
+        <section class="factura__panel-izquierdo">
+            <h2 class="factura__subtitulo">Agregar producto</h2>
+
+            <form class="formulario-agregar"
+                  hx-post="/facturacion/agregar"
+                  hx-target="#carrito"
+                  hx-swap="outerHTML"
+                  hx-indicator="#indicador-agregar">
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="producto_id">Producto</label>
+                    <select class="campo__control" id="producto_id" name="producto_id" required>
+                        <option value="" disabled selected>Selecciona un producto</option>
+                        {% for producto in productos %}
+                        <option value="{{ producto.id }}">{{ producto.nombre }} — L. {{ "%.2f"|format(producto.precio) }} ({{ producto.stock }} disp.)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="cantidad">Cantidad</label>
+                    <input class="campo__control" type="number" id="cantidad" name="cantidad" min="1" value="1" required>
+                </div>
+
+                <button class="boton boton--secundario" type="submit">
+                    <span class="htmx-indicator" id="indicador-agregar">Agregando... </span>+ Agregar al carrito
+                </button>
+            </form>
+
+            {% if not productos %}
+            <p class="factura__vacio">No hay productos con stock disponible. Agrega inventario primero.</p>
+            {% endif %}
+        </section>
+
+        <section class="factura__panel-derecho">
+            <h2 class="factura__subtitulo">Carrito</h2>
+            {% include "_carrito.html" %}
+
+            <form class="formulario-generar"
+                  hx-post="/facturacion/generar"
+                  hx-target="#carrito"
+                  hx-swap="outerHTML"
+                  hx-indicator="#indicador-generar">
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="cliente_nombre">Cliente</label>
+                    <input class="campo__control" type="text" id="cliente_nombre" name="cliente_nombre" placeholder="Nombre del cliente" required>
+                </div>
+
+                <button class="boton boton--principal" type="submit">
+                    <span class="htmx-indicator" id="indicador-generar">Generando... </span>Generar factura
+                </button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
