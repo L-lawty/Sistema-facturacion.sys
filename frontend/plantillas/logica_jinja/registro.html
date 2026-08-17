@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear cuenta · facturación</title>
     <link rel="stylesheet" href="/static/styles/acceso.css">
+    <!-- Agregamos Font Awesome para los íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <section class="acceso__marca">
@@ -45,6 +47,11 @@
                 </div>
 
                 <div class="campo">
+                    <label class="campo__etiqueta" for="correo">Correo electrónico</label>
+                    <input class="campo__control" type="email" id="correo" name="correo" placeholder="tucorreo@gmail.com" autocomplete="email" required>
+                </div>
+
+                <div class="campo">
                     <label class="campo__etiqueta" for="contrasena">Contraseña</label>
                     <input class="campo__control" type="password" id="contrasena" name="contrasena" placeholder="mínimo 8 caracteres" autocomplete="new-password" required minlength="8">
                 </div>
@@ -58,6 +65,41 @@
                     <span class="htmx-indicator" id="indicador-registro">Creando... </span>Crear cuenta
                 </button>
             </form>
+
+            <!-- NUEVO: Redes sociales -->
+            <div class="redes-sociales">
+                <p class="redes-sociales__texto">Síguenos en nuestras redes</p>
+                <div class="redes-sociales__links">
+                    <a href="https://www.tiktok.com/@facturacion.sys?_r=1&_t=ZS-98xzRBYGjaf" 
+                       target="_blank" 
+                       class="redes-sociales__link redes-sociales__link--tiktok"
+                       aria-label="TikTok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://www.instagram.com/facturacion.sys?igsh=MXg2ZjNjaGc4Z3FlNA==" 
+                       target="_blank" 
+                       class="redes-sociales__link redes-sociales__link--instagram"
+                       aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/share/1HEWPyUfym/" 
+                       target="_blank" 
+                       class="redes-sociales__link redes-sociales__link--facebook"
+                       aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="mailto:facturacionsys809@gmail.com" 
+                       class="redes-sociales__link redes-sociales__link--email"
+                       aria-label="Correo electrónico">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+                <p class="redes-sociales__email">
+                    <i class="fas fa-envelope"></i> 
+                    <span>mandanos mensaje directos en: </span>
+                    <a href="mailto:facturacionsys809@gmail.com">facturacionsys809@gmail.com</a>
+                </p>
+            </div>
 
             <p class="tarjeta-acceso__pie">Tus datos se protegen con hash bcrypt</p>
         </div>

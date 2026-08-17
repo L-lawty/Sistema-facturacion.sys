@@ -41,10 +41,60 @@ def inicializar_db():
                 CREATE TABLE IF NOT EXISTS usuarios (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     nombre VARCHAR(100) UNIQUE NOT NULL,
+                    email VARCHAR(255) NULL UNIQUE,
                     password_hash VARCHAR(255) NOT NULL,
+                    email_verificado TINYINT(1) NOT NULL DEFAULT 0,
+                    codigo_verificacion VARCHAR(6) NULL,
+                    codigo_expira TIMESTAMP NULL,
                     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB CHARACTER SET utf8mb4
             """)
+            # Migración: si la tabla ya existía de antes de pedir correo,
+            # se agrega la columna aparte. Nullable porque las cuentas viejas
+            # no tienen correo guardado (simplemente no reciben avisos hasta
+            # que alguien las actualice a mano en la base de datos).
+            try:
+                cursor.execute(
+                    "ALTER TABLE usuarios ADD COLUMN email VARCHAR(255) NULL"
+                )
+            except pymysql.err.OperationalError as error:
+                if error.args[0] != 1060:  # 1060 = Duplicate column name
+                    raise
+            try:
+                cursor.execute(
+                    "ALTER TABLE usuarios ADD CONSTRAINT uq_usuarios_email UNIQUE (email)"
+                )
+            except (pymysql.err.OperationalError, pymysql.err.IntegrityError) as error:
+                if error.args[0] not in (1061, 1557, 1826):  # el índice/constraint ya existe
+                    raise
+            # Migración: verificación de correo por código de 6 dígitos.
+            # Las cuentas viejas (creadas antes de este cambio) quedarían con
+            # email_verificado = 0 y sin poder entrar; como ya existían de
+            # buena fe, se marcan como verificadas de una vez.
+            try:
+                cursor.execute(
+                    "ALTER TABLE usuarios ADD COLUMN email_verificado TINYINT(1) NOT NULL DEFAULT 0"
+                )
+                cursor.execute(
+                    "UPDATE usuarios SET email_verificado = 1 WHERE creado_en < NOW()"
+                )
+            except pymysql.err.OperationalError as error:
+                if error.args[0] != 1060:
+                    raise
+            try:
+                cursor.execute(
+                    "ALTER TABLE usuarios ADD COLUMN codigo_verificacion VARCHAR(6) NULL"
+                )
+            except pymysql.err.OperationalError as error:
+                if error.args[0] != 1060:
+                    raise
+            try:
+                cursor.execute(
+                    "ALTER TABLE usuarios ADD COLUMN codigo_expira TIMESTAMP NULL"
+                )
+            except pymysql.err.OperationalError as error:
+                if error.args[0] != 1060:
+                    raise
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS productos (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -166,14 +216,66 @@ def obtener_usuario_por_nombre(nombre: str):
             return cursor.fetchone()
 
 
-def crear_usuario(nombre: str, password_hash: str):
+def obtener_usuario_por_id(usuario_id: int):
+    with obtener_conexion() as conexion:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT * FROM usuarios WHERE id = %s", (usuario_id,))
+            return cursor.fetchone()
+
+
+def obtener_usuario_por_correo(email: str):
     with obtener_conexion() as conexion:
         with conexion.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO usuarios (nombre, password_hash) VALUES (%s, %s)",
-                (nombre, password_hash),
+                "SELECT * FROM usuarios WHERE email = %s", (email,)
+            )
+            return cursor.fetchone()
+
+
+def crear_usuario(nombre: str, email: str, password_hash: str) -> int:
+    """Devuelve el id del usuario recién creado (todavía sin verificar)."""
+    with obtener_conexion() as conexion:
+        with conexion.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO usuarios (nombre, email, password_hash) VALUES (%s, %s, %s)",
+                (nombre, email, password_hash),
+            )
+            usuario_id = cursor.lastrowid
+        conexion.commit()
+    return usuario_id
+
+
+def establecer_codigo_verificacion(usuario_id: int, codigo: str, minutos_expira: int = 15):
+    with obtener_conexion() as conexion:
+        with conexion.cursor() as cursor:
+            cursor.execute(
+                """UPDATE usuarios
+                   SET codigo_verificacion = %s, codigo_expira = DATE_ADD(NOW(), INTERVAL %s MINUTE)
+                   WHERE id = %s""",
+                (codigo, minutos_expira, usuario_id),
             )
         conexion.commit()
+
+
+def confirmar_correo(usuario_id: int, codigo: str) -> bool:
+    """Marca el correo como verificado si el código coincide y no ha expirado."""
+    with obtener_conexion() as conexion:
+        with conexion.cursor() as cursor:
+            cursor.execute(
+                """SELECT id FROM usuarios
+                   WHERE id = %s AND codigo_verificacion = %s AND codigo_expira > NOW()""",
+                (usuario_id, codigo),
+            )
+            if cursor.fetchone() is None:
+                return False
+            cursor.execute(
+                """UPDATE usuarios
+                   SET email_verificado = 1, codigo_verificacion = NULL, codigo_expira = NULL
+                   WHERE id = %s""",
+                (usuario_id,),
+            )
+        conexion.commit()
+    return True
 
 
 # ---------- Productos (aislados por usuario) ----------

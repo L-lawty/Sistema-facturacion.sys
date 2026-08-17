@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifica tu correo · facturación</title>
+    <link rel="stylesheet" href="/static/styles/acceso.css">
+</head>
+<body>
+    <section class="acceso__marca">
+        <p class="acceso__marca__logo">facturación <span>.sys</span></p>
+        <div class="acceso__marca__cuerpo">
+            <h1 class="acceso__marca__titulo">Ya casi<br>terminamos.</h1>
+            <p class="acceso__marca__descripcion">Te mandamos un código de 6 dígitos a tu correo. Escríbelo aquí para activar tu cuenta.</p>
+        </div>
+        <p class="acceso__marca__pie">sistema de gestión empresarial</p>
+    </section>
+
+    <section class="acceso__formulario">
+        <div class="tarjeta-acceso">
+            <header class="tarjeta-acceso__encabezado">
+                <h2 class="tarjeta-acceso__titulo">Verifica tu correo</h2>
+                <p class="tarjeta-acceso__subtitulo">Enviamos un código a <strong>{{ correo }}</strong></p>
+            </header>
+
+            <form class="formulario-acceso"
+                  hx-post="/verificar/codigo"
+                  hx-target="#contenedor-error-verificar"
+                  hx-swap="innerHTML"
+                  hx-indicator="#indicador-verificar">
+
+                <div id="contenedor-error-verificar">
+                    {% if error %}
+                    <p class="formulario-acceso__error">{{ error }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="campo">
+                    <label class="campo__etiqueta" for="codigo">Código de 6 dígitos</label>
+                    <input class="campo__control" type="text" id="codigo" name="codigo"
+                           placeholder="000000" inputmode="numeric" pattern="[0-9]{6}"
+                           maxlength="6" autocomplete="one-time-code" required>
+                </div>
+
+                <button class="boton boton--principal" type="submit">
+                    <span class="htmx-indicator" id="indicador-verificar">Verificando... </span>Confirmar
+                </button>
+            </form>
+
+            <button class="boton boton--secundario" type="button"
+                    hx-post="/verificar/reenviar"
+                    hx-target="#contenedor-error-verificar"
+                    hx-swap="innerHTML">
+                Reenviar código
+            </button>
+
+            <p class="tarjeta-acceso__pie">¿Te equivocaste de correo? <a href="/registro">Vuelve a registrarte</a></p>
+        </div>
+    </section>
+</body>
+</html>

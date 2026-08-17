@@ -153,6 +153,17 @@ body::before{
     padding: 10px 12px;
     font-size: var(--text-botones);
 }
+.formulario-acceso__aviso{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--state-completado);
+    background-color: rgba(76, 175, 109, 0.08);
+    color: var(--state-completado);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    font-size: var(--text-botones);
+}
 
 .boton{
     height: 42px;
@@ -216,5 +227,130 @@ body::before{
     }
 }
 
+/* ---- Redes Sociales ---- */
+.redes-sociales {
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.redes-sociales__texto {
+    font-family: var(--font-mono-secu);
+    font-size: var(--text-labels);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-titulos-secu);
+    color: var(--text-del-sistema);
+}
+
+.redes-sociales__links {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.redes-sociales__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background-color: var(--bg-secundario);
+    color: var(--text-secundario);
+    font-size: 22px;
+    text-decoration: none;
+    transition: all var(--ease-standard);
+    position: relative;
+}
+
+.redes-sociales__link:hover {
+    transform: translateY(-4px) scale(1.05);
+    border-color: var(--text-secundario);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.05);
+}
+
+/* Colores específicos para cada red con hover */
+.redes-sociales__link--tiktok:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, #00f2ea 0%, #ff0050 100%);
+    border-color: transparent;
+    box-shadow: 0 6px 25px rgba(255, 0, 80, 0.25);
+}
+
+.redes-sociales__link--instagram:hover {
+    color: #ffffff;
+    background: radial-gradient(circle at 30% 110%, #feda75 0%, #fa7e1e 30%, #d62976 60%, #962fbf 80%, #4f5bd5 100%);
+    border-color: transparent;
+    box-shadow: 0 6px 25px rgba(214, 41, 118, 0.25);
+}
+
+.redes-sociales__link--facebook:hover {
+    color: #ffffff;
+    background: #1877f2;
+    border-color: transparent;
+    box-shadow: 0 6px 25px rgba(24, 119, 242, 0.25);
+}
+
+.redes-sociales__link--email:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ea4335 0%, #c62828 100%);
+    border-color: transparent;
+    box-shadow: 0 6px 25px rgba(234, 67, 53, 0.25);
+}
+
+/* Email directo */
+.redes-sociales__email {
+    font-size: var(--text-botones);
+    color: var(--text-secundario);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.redes-sociales__email i {
+    color: var(--text-del-sistema);
+    font-size: 13px;
+}
+
+.redes-sociales__email span {
+    color: var(--text-del-sistema);
+}
+
+.redes-sociales__email a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: border-color var(--ease-standard), color var(--ease-standard);
+    padding: 2px 0;
+}
+
+.redes-sociales__email a:hover {
+    color: #ea4335;
+    border-bottom-color: #ea4335;
+}
+
+/* Responsive para redes sociales */
+@media (max-width: 600px) {
+    .redes-sociales__link {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+    }
+    .redes-sociales__links {
+        gap: 12px;
+    }
+    .redes-sociales__email {
+        font-size: 11px;
+    }
+}
 
 
